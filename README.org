@@ -1,0 +1,20 @@
+#+TITLE: @savant/webapp
+#+DATE: 2023-03-27
+#+DESCRIPTION: README for @savant/webapp
+
+* @savant/webapp
+
+Create chrome web app's easily in any Debain based distro.
+
+** Inspiration
+The built in `Web Apps` feature in Gnome, except it's a lot easier and simpler to use.
+
+** Installation
+#+BEGIN_SRC sh
+$ npm install -g @savant/webapp
+#+END_SRC
+
+** Usage
+#+BEGIN_SRC sh
+$ webapp -u <url> -n <name>
+#+END_SRC
