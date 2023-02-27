@@ -18,5 +18,8 @@ $ npm install -g @savant/webapp
 
 ** Usage
 #+BEGIN_SRC sh
-$ webapp -u <url> -n <name>
+$ chromeapp -u <url> -n <name>
 #+END_SRC
+
+savant.**********
+savant.big2010ben
