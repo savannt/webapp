@@ -66,7 +66,7 @@ module.exports = async (url, name) => {
     
                         const spinner2 = ora("Creating shortcut...").start();
                         // create .desktop in ~/.local/share/applications
-                        const desktopFile = `#!/usr/bin/env xdg-open\n[Desktop Entry]\nName=${name}\nExec="${chromePath}" --test-type --no-first-run --user-data-dir=${name} --app="${url}"\nIcon=${name}\nTerminal=false\nType=Application`;
+                        const desktopFile = `#!/usr/bin/env xdg-open\n[Desktop Entry]\nName=${name}\nExec=env WM_CLASS=${name} "${chromePath}" --class=${name} --class-icon="${iconPath}" --test-type --no-first-run --user-data-dir=${name} --app="${url}"\nIcon=${name}\nTerminal=false\nType=Application`;
                         const desktopFilePath = process.env.HOME + "/.local/share/applications/" + name + ".desktop";
                         fs.writeFileSync(desktopFilePath, desktopFile);
                         spinner2.succeed("Shortcut created");
