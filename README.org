@@ -1,13 +1,15 @@
-#+TITLE: @savant/webapp
+#+TITLE: @savant/chrome-app
 #+DATE: 2023-03-27
-#+DESCRIPTION: README for @savant/webapp
+#+DESCRIPTION: README for @savant/chrome-app
 
-* @savant/webapp
+* @savant/chrome-app
 
 Create chrome web app's easily in any Debain based distro.
 
 ** Inspiration
-The built in `Web Apps` feature in Gnome, except it's a lot easier and simpler to use.
+The built in `Web Apps` falls short in a few ways.
+
+Primarily it does not allow user-data-dir persistence or custom chrome flags.
 
 ** Installation
 #+BEGIN_SRC sh
