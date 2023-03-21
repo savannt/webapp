@@ -1,6 +1,6 @@
 {
-  "name": "@savant/chrome-app",
-  "version": "1.1.0",
+  "name": "@savant/webapp",
+  "version": "1.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
