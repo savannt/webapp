@@ -19,7 +19,7 @@ if(!chromePath) {
     process.exit(1);
 }
 
-module.exports = async (url, name) => {
+module.exports = async (url, name, icon, ignoreIcon) => {
     if(!url) {
         // prompt for url
         url = await inquirer.prompt({
@@ -44,15 +44,34 @@ module.exports = async (url, name) => {
     }
 
     return await new Promise(r => {
-        const spinner = ora("Fetching website...").start();
+        
+        const iconPrepareSpinner = ora("Finding icon...");
 
-        const faviconUrl = _url.parse(url).protocol + "//" + _url.parse(url).host + "/favicon.ico";
-        request(faviconUrl, {encoding: null}, function (error, response, body) {
+        let iconUrl;
+
+        if(icon) {
+            if(icon.startsWith("https://") || icon.startsWith("http://")) {
+                if(icon.includes(".png")) {
+                    iconUrl = icon;
+                    iconPrepareSpinner.succeed("Using remote png as icon");
+                } else {
+                    iconUrl = _url.parse(iconUrl).protocol + "//" + _url.parse(iconUrl).host + "/favicon.ico";
+                    iconPrepareSpinner.succeed("Using custom favicon as icon");
+                }
+            }
+        } else {
+            // default URL's use favicon
+            iconUrl = _url.parse(url).protocol + "//" + _url.parse(url).host + "/favicon.ico";
+            iconPrepareSpinner.succeed("Using favicon as icon");
+        }
+        
+        
+        const spinner = ora("Fetching icon...").start();
+        request(iconUrl, {encoding: null}, function (error, response, body) {
             if (!error && response.statusCode == 200) {
                 // convert to png
                 const data = body.toString("base64");
-                spinner.succeed("Favicon fetched");
-                
+                spinner.succeed("Icon fetched");
                 // write file to ~/.local/share/icons/answers.name.png
                 const home = process.env.HOME;
                 const iconPath = home + "/.local/share/icons/" + name + ".png";
@@ -63,17 +82,28 @@ module.exports = async (url, name) => {
                         r(false);
                     } else {
                         spinner.succeed("Icon saved");
-    
+                        const userDataDir = `${process.env.HOME}/.config/user-data-dirs/${name}`;
                         const spinner2 = ora("Creating shortcut...").start();
                         // create .desktop in ~/.local/share/applications
-                        const desktopFile = `#!/usr/bin/env xdg-open\n[Desktop Entry]\nName=${name}\nExec=env WM_CLASS=${name} "${chromePath}" --class=${name} --class-icon="${iconPath}" --test-type --no-first-run --user-data-dir=${name} --app="${url}"\nIcon=${name}\nTerminal=false\nType=Application`;
+                        const desktopFile = `#!/usr/bin/env xdg-open\n[Desktop Entry]\nName=${name}\nExec=env WM_CLASS="${name}" "${chromePath}" --class="${name}" --class-icon=${iconPath} --test-type --no-first-run --user-data-dir="${userDataDir}" --app="${url}"\nIcon=${name}\nTerminal=false\nType=Application`;
                         const desktopFilePath = process.env.HOME + "/.local/share/applications/" + name + ".desktop";
                         fs.writeFileSync(desktopFilePath, desktopFile);
+                        fs.chmodSync(desktopFilePath, 0o755); // Set execute permission
                         spinner2.succeed("Shortcut created");
                         r(true);
                     }
                 });
             } else {
+                if(ignoreIcon) {
+                    const spinner2 = ora("Creating shortcut...").start();
+                    const userDataDir = `${process.env.HOME}/.config/user-data-dirs/${name}`;
+                    const desktopFile = `#!/usr/bin/env xdg-open\n[Desktop Entry]\nName=${name}\nExec=env WM_CLASS="${name}" "${chromePath}" --class="${name}" --class-icon=${iconPath} --test-type --no-first-run --user-data-dir="${userDataDir}" --app="${url}"\nIcon=${name}\nTerminal=false\nType=Application`;
+                    const desktopFilePath = process.env.HOME + "/.local/share/applications/" + name + ".desktop";
+                    fs.writeFileSync(desktopFilePath, desktopFile);
+                    fs.chmodSync(desktopFilePath, 0o755); // Set execute permission
+                    spinner2.succeed("Shortcut created");
+                    return r(true);  
+                }
                 spinner.fail("Failed to fetch favicon");
                 console.log(error);
                 r(false);
