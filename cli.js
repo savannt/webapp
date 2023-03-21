@@ -29,7 +29,7 @@ program
         const display = options.display;
         const appDir = path.join(process.env.HOME, ".local/share/applications");
         const appFile = path.join(appDir, `${app}.desktop`);
-        const displayHeader = display ? `DISPLAY=${display} ` : "";
+        const displayHeader = display && display !== "false" ? `DISPLAY=${display} ` : "";
 
         if (fs.existsSync(appFile)) {
             child_process.exec(`${displayHeader}gtk-launch ${app}`, async (error) => {

@@ -1,13 +1,13 @@
 {
   "name": "@savant/webapp",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "chromeapp": "cli.js"
+    "webapp": "cli.js"
   },
   "keywords": [],
   "author": "",
