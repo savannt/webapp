@@ -23,13 +23,16 @@ program
 
 program
     .command("run <app>")
+    .option("-d, --display <display>", "Display to use. Defaults to $DISPLAY")
     .description("Run a webapp by its name")
-    .action(async (app) => {
+    .action((app, options) => {
+        const display = options.display;
         const appDir = path.join(process.env.HOME, ".local/share/applications");
         const appFile = path.join(appDir, `${app}.desktop`);
-    
+        const displayHeader = display ? `DISPLAY=${display} ` : "";
+
         if (fs.existsSync(appFile)) {
-            child_process.exec(`gtk-launch ${app}`, async (error) => {
+            child_process.exec(`${displayHeader}gtk-launch ${app}`, async (error) => {
                 if (error) {
                     console.error("Failed to run the webapp:", error);
                 } else {
@@ -47,8 +50,6 @@ program
                     });
                 }
             });
-        } else {
-            console.error(`Webapp '${app}' not found.`);
         }
     });
 
